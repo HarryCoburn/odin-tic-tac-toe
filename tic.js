@@ -53,29 +53,38 @@ const displayController = (() => {
 })();
 
 const logicController = (() => {
-    const playerSymbol = "X"
-    const computerSymbol = "O"
     const player = Symbol("player")
     const computer = Symbol("computer")
     let currTurn = player;
-    const squareClicked = (x, y) => { 
-        if (currTurn === player) {
-            GameBoard.board[x][y].square.textContent = playerSymbol;
-            currTurn = computer;
-        } else {
-            GameBoard.board[x][y].square.textContent = computerSymbol;
-            currTurn = player;
-        }
+    let playSymbols = {
+        player: "X",
+        computer: "O"
+    }    
+    
+    const changePlayer = () => {
+        (currTurn === player)?currTurn = computer:currTurn = player;
     }
+    
+    const squareClicked = (x, y) => {
+        let spotClicked =  GameBoard.board[x][y].square;
+        if (spotClicked.textContent !== "") return;        
+        if (currTurn === player) {
+            spotClicked.textContent = playSymbols.player;            
+        } else {
+            spotClicked.textContent = playSymbols.computer;            
+        }
+        changePlayer()
+    }
+
+
+
     return {
         squareClicked
     }
 })();
 
-function game() {
-    currPlayer = "X";
-    displayController.render(GameBoard.board);
-    GameBoard.board[0][0].fillSquare(currPlayer);
+function game() {    
+    displayController.render(GameBoard.board);    
 }
 
 game();
