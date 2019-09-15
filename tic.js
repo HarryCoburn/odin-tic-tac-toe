@@ -5,15 +5,14 @@
 
 const Square = () => {
     const square = document.createElement('div');
-    square.classList.add('square');
-    square.textContent = "";
-    square.addEventListener("click", function () { console.log("Clicks worked") });
     const fillSquare = content => {
-        if (square.textContent !== "") {
+        if (square.textContent === "") {
             square.textContent = content;
         }
-
+        console.log(content);
     }
+    square.classList.add('square');
+    square.textContent = "";    
     return { square, fillSquare };
 }
 

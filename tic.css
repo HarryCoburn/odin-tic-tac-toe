@@ -1,6 +1,17 @@
-.square {
-    width: 100px;
-    height: 100px;
-    background-color: aqua;
+.square {        
+    background-color: aqua;    
+    grid-column: auto;
+    grid-row: auto;    
+}
 
+#board {
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 400px;
+    height: 400px;
+    row-gap: 10px;
+    column-gap: 10px;
 }
