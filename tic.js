@@ -8,16 +8,19 @@ const Square = (x, y) => {
     const fillSquare = content => {
         if (square.textContent === "") {
             square.textContent = content;
-        }        
+        }
     }
-    const returnPosition = () => {
+    const squareClicked = () => {
         logicController.squareClicked(posX, posY);
     }
+    const getSquarePos = () => {
+        return [posX, posY];
+    }
     let posX = x;
-    let posY = y;    
+    let posY = y;
     square.classList.add('square');
-    square.addEventListener('click', returnPosition);    
-    return { square, fillSquare };
+    square.addEventListener('click', squareClicked);
+    return { square, fillSquare, getSquarePos };
 }
 
 
@@ -25,10 +28,9 @@ const GameBoard = (() => {
     const pieces = ["X", "O"];
     const boardSideSize = 3;
     let board = [];
-    for (let i = 0; i < boardSideSize; i++) {
-        board.push([]);
+    for (let i = 0; i < boardSideSize; i++) {        
         for (let j = 0; j < boardSideSize; j++) {
-            board[i][j] = Square(i,j); // Goes across, then down
+            board.push(Square(i, j));
         }
     }
     return {
@@ -39,11 +41,9 @@ const GameBoard = (() => {
 
 const displayController = (() => {
     const render = gameBoard => {
-        for (let i = 0; i < gameBoard.length; i++) {            
-            for (let j = 0; j < gameBoard.length; j++) {                
-                document.getElementById("board").appendChild(gameBoard[i][j].square);
-            }
-
+        console.log(gameBoard)
+        for (let i = 0; i < gameBoard.length; i++) {
+            document.getElementById("board").appendChild(gameBoard[i].square);
         }
     }
 
@@ -59,32 +59,47 @@ const logicController = (() => {
     let playSymbols = {
         player: "X",
         computer: "O"
-    }    
-    
+    }
+
     const changePlayer = () => {
-        (currTurn === player)?currTurn = computer:currTurn = player;
+        (currTurn === player) ? currTurn = computer : currTurn = player;
     }
-    
+
+    const findSquare = (x, y)  => {
+        return GameBoard.board.find(square => {
+            let posToCheck = square.getSquarePos();
+            return (posToCheck[0] === x) && (posToCheck[1] === y)
+        })
+    }
+
     const squareClicked = (x, y) => {
-        let spotClicked =  GameBoard.board[x][y].square;
-        if (spotClicked.textContent !== "") return;        
+        let spotClicked = findSquare(x,y).square;
+        console.log(spotClicked)
+        if (spotClicked.textContent !== "") return;
         if (currTurn === player) {
-            spotClicked.textContent = playSymbols.player;            
+            spotClicked.textContent = playSymbols.player;
         } else {
-            spotClicked.textContent = playSymbols.computer;            
+            spotClicked.textContent = playSymbols.computer;
         }
-        changePlayer()
+        let result = checkForWinner();
+        if (result === false) changePlayer();
     }
 
+    const checkForWinner = () => {
+        let board = GameBoard.board;
+        let boardValues = [];
 
+
+
+    }
 
     return {
         squareClicked
     }
 })();
 
-function game() {    
-    displayController.render(GameBoard.board);    
+function game() {
+    displayController.render(GameBoard.board);
 }
 
 game();
