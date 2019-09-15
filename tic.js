@@ -3,28 +3,29 @@
 
 // Gameboard Object
 
-const Square = () => {
+const Square = (x, y) => {
     const square = document.createElement('div');
     const fillSquare = content => {
         if (square.textContent === "") {
             square.textContent = content;
-        }
-        console.log(content);
+        }        
     }
+    let posX = x;
+    let posY = y;
     square.classList.add('square');
     square.textContent = "";    
     return { square, fillSquare };
 }
 
 
-const gameBoard = (() => {
+const GameBoard = (() => {
     const pieces = ["X", "O"];
     const boardSideSize = 3;
     let board = [];
     for (let i = 0; i < boardSideSize; i++) {
         board.push([]);
         for (let j = 0; j < boardSideSize; j++) {
-            board[i][j] = Square();
+            board[i][j] = Square(j,i); // Goes across, then down
         }
     }
     return {
@@ -48,4 +49,12 @@ const displayController = (() => {
     }
 })();
 
-displayController.render(gameBoard.board);
+function game() {
+    currPlayer = "X";
+    displayController.render(GameBoard.board);
+    GameBoard.board[0][0].fillSquare(currPlayer);
+}
+
+game();
+
+
