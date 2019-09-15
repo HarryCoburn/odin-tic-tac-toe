@@ -3,9 +3,31 @@
 
 // Gameboard Object
 
+const Square = () => {
+    const square = document.createElement('div');
+    square.classList.add('square');
+    square.textContent = "";
+    square.addEventListener("click", function () { console.log("Clicks worked") });
+    const fillSquare = content => {
+        if (square.textContent !== "") {
+            square.textContent = content;
+        }
+
+    }
+    return { square, fillSquare };
+}
+
+
 const gameBoard = (() => {
     const pieces = ["X", "O"];
-    const board = [["X","X","X"],["X","X","X"],["X","X","X"]];
+    const boardSideSize = 3;
+    let board = [];
+    for (let i = 0; i < boardSideSize; i++) {
+        board.push([]);
+        for (let j = 0; j < boardSideSize; j++) {
+            board[i][j] = Square();
+        }
+    }
     return {
         pieces,
         board
@@ -14,16 +36,17 @@ const gameBoard = (() => {
 
 const displayController = (() => {
     const render = gameBoard => {
-        gameBoard.forEach(play => {
-            let space = document.createElement('div');
-            space.textContent = play;
-            document.getElementById("board").appendChild(space);
-        })
+        for (let i = 0; i < gameBoard.length; i++) {            
+            for (let j = 0; j < gameBoard.length; j++) {
+                document.getElementById("board").appendChild(gameBoard[i][j].square);
+            }
+
+        }
     }
 
-return {
-    render
-}
+    return {
+        render
+    }
 })();
 
 displayController.render(gameBoard.board);
