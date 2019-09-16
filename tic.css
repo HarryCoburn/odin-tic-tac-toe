@@ -25,3 +25,9 @@
 h1 {
     text-align: center;
 }
+
+#controls {
+    margin: 20px auto 20px auto;
+    display: grid;
+    width: 400px;   
+}

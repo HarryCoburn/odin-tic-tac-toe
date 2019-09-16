@@ -40,16 +40,36 @@ const GameBoard = (() => {
 })();
 
 const displayController = (() => {
-    const render = gameBoard => {
-        console.log(gameBoard)
+    const render = gameBoard => {        
         for (let i = 0; i < gameBoard.length; i++) {
             document.getElementById("board").appendChild(gameBoard[i].square);
         }
+        let controls = document.getElementById("controls");
+        let playAgain = document.createElement('button');
+        playAgain.id = "playAgain";
+        playAgain.textContent = "Play Again?"
+        playAgain.style.visibility = "hidden";
+        playAgain.addEventListener('click', logicController.resetGame);
+        controls.appendChild(playAgain);
+
+    }
+
+    const processWinner = (result, player, computer, cat) => {        
+        let winStr = document.getElementById("winStr");        
+        if (result === player) { winStr.textContent = "Player Wins!"}
+        if (result === computer) { winStr.textContent = "Computer Wins..."}
+        if (result === cat) { winStr.textContent = "It's a tie!"}
+        let playAgain = document.getElementById('playAgain');
+        playAgain.style.visibility = "visible";
+        
     }
 
     return {
-        render
+        render,
+        processWinner
     }
+
+    
 })();
 
 const logicController = (() => {
@@ -98,7 +118,7 @@ const logicController = (() => {
         
         if (result === noWin) { changePlayer() }
         else {
-            console.log(result)
+            displayController.processWinner(result, player, computer, cat);
         };
     }
 
@@ -115,15 +135,23 @@ const logicController = (() => {
         return (s[p1] === playSymbols.player)?player:computer;
     }
 
-    
-
     const stalemateQ = () => {
         let s = (GameBoard.board.map(item => item.square.textContent))
         if (s.every(item => item !== "")) return cat;
+    }    
+
+    const resetGame = () => {
+        currTurn = player;
+        result = noWin;
+        GameBoard.board.forEach(item => item.square.textContent = "");
+        let playAgain = document.getElementById("playAgain");
+        let winStr = document.getElementById("winStr");
+        playAgain.style.visibility = "hidden";
+        winStr.textContent = "";
     }
 
     return {
-        squareClicked
+        squareClicked, resetGame
     }
 })();
 
