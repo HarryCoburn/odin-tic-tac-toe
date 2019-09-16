@@ -23,7 +23,6 @@ const Square = (x, y) => {
     return { square, fillSquare, getSquarePos };
 }
 
-
 const GameBoard = (() => {
     const pieces = ["X", "O"];
     const boardSideSize = 3;
@@ -40,11 +39,41 @@ const GameBoard = (() => {
 })();
 
 const displayController = (() => {
-    const render = gameBoard => {        
+    const renderStartScreen = () => {
+        let playerForm = document.createElement('form');
+        playerForm.id = "playerNames";
+        // Populate form with fields;
+        let fieldNames = ["X player", "O player"]
+        fieldNames.forEach(field => {
+            let newField = document.createElement('input');
+            newField.id = field;
+            newField.type = "text";
+            newField.name = field;
+            let newLabel = document.createElement('label');
+            newLabel.for = field;
+            newLabel.textContent = field + ": "
+            playerForm.appendChild(newLabel);
+            playerForm.appendChild(newField);
+        });
+        document.getElementById("names").appendChild(playerForm)
+        let startGame = document.createElement('button');
+        startGame.id = "start";
+        startGame.textContent = "Start Game"
+        startGame.addEventListener('click', logicController.startGame)
+        document.getElementById("names").appendChild(startGame)
+    }
+
+
+    const renderGame = (gameBoard, p1, p2) => {
+        document.getElementById("board").style.visibility = "visible";
+        let names = document.getElementById("names")
+        names.innerHTML = `
+        <p>X: ${p1}</p>
+        <p>O: ${p2}</p>`        
         for (let i = 0; i < gameBoard.length; i++) {
             document.getElementById("board").appendChild(gameBoard[i].square);
         }
-        let controls = document.getElementById("controls");
+        let controls = document.getElementById("controls");    
         let playAgain = document.createElement('button');
         playAgain.id = "playAgain";
         playAgain.textContent = "Play Again?"
@@ -54,19 +83,16 @@ const displayController = (() => {
 
     }
 
-    const processWinner = (result, player, computer, cat) => {        
-        let winStr = document.getElementById("winStr");        
-        if (result === player) { winStr.textContent = "Player Wins!"}
-        if (result === computer) { winStr.textContent = "Computer Wins..."}
-        if (result === cat) { winStr.textContent = "It's a tie!"}
-        let playAgain = document.getElementById('playAgain');
-        playAgain.style.visibility = "visible";
-        
+    const displayWinner = (winStr) => {
+        document.getElementById("winStr").textContent = winStr;
+        document.getElementById('playAgain').style.visibility = "visible";
     }
+    
 
     return {
-        render,
-        processWinner
+        renderGame,
+        renderStartScreen,
+        displayWinner
     }
 
     
@@ -82,7 +108,20 @@ const logicController = (() => {
         player: "X",
         computer: "O"
     }
+    let p1 = "";
+    let p2 = "";
+
     let result = noWin;
+
+    const startGame = () => {        
+        p1 = document.forms["playerNames"]["X player"].value || "Player 1";
+        p2 = document.forms["playerNames"]["O player"].value || "Player 2";
+        let startForm = document.getElementById("names");
+        while (startForm.firstChild){
+            startForm.removeChild(startForm.firstChild);
+        };        
+        displayController.renderGame(GameBoard.board, p1, p2);        
+    }
 
     const changePlayer = () => {
         (currTurn === player) ? currTurn = computer : currTurn = player;
@@ -118,7 +157,7 @@ const logicController = (() => {
         
         if (result === noWin) { changePlayer() }
         else {
-            displayController.processWinner(result, player, computer, cat);
+            processWinner();
         };
     }
 
@@ -140,6 +179,16 @@ const logicController = (() => {
         if (s.every(item => item !== "")) return cat;
     }    
 
+    const processWinner = () => {
+        let winStr = "";                
+        if (result === player) { winStr = `${p1} Wins!` }
+        if (result === computer) { winStr = `${p2} Wins!`}
+        if (result === cat) { winStr = "It's a tie!"}
+        displayController.displayWinner(winStr);
+        
+        
+    }
+
     const resetGame = () => {
         currTurn = player;
         result = noWin;
@@ -151,12 +200,13 @@ const logicController = (() => {
     }
 
     return {
-        squareClicked, resetGame
+        squareClicked, resetGame, startGame
     }
 })();
 
 function game() {
-    displayController.render(GameBoard.board);
+    document.getElementById("board").style.visibility = "hidden";
+    displayController.renderStartScreen();    
 }
 
 game();
